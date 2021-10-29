@@ -26,13 +26,13 @@ find_package(std_msgs REQUIRED)
 #Build UDPCOM
 #if( HWCOMLIB_BUILD_SHARED_LIBS )
 add_library(udpcom SHARED
-  src/udp_recv_class.cc
-  src/udp_send_class.cc
+  src/udp_recv.cc
+  src/udp_send.cc
 )
 #else()
 #  add_library(udpcom STATIC
-#    src/udp_recv_class.cc
-#    src/udp_send_class.cc
+#    src/udp_recv.cc
+#    src/udp_send.cc
 #  )
 #endif()
 target_compile_definitions(udpcom

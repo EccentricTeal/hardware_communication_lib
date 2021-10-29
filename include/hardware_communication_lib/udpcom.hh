@@ -25,12 +25,12 @@
 namespace hwcomlib
 {
 
-  class UdpSendClass
+  class UdpSend
   {       
     /* Constructor, Destructor */
     public:
-      UdpSendClass( std::string dest_ip, uint16_t dest_port );
-      ~UdpSendClass();
+      UdpSend( std::string dest_ip, uint16_t dest_port );
+      ~UdpSend();
 
     /* Public Member Functions */
     public:
@@ -48,12 +48,12 @@ namespace hwcomlib
   };
 
 
-  class UdpRecvClass
+  class UdpRecv
   { 
     /* Constructor, Destructor */
     public:
-      UdpRecvClass( uint16_t udp_port );
-      ~UdpRecvClass();
+      UdpRecv( uint16_t udp_port );
+      ~UdpRecv();
 
     /* Public member functions */
     public:

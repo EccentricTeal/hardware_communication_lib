@@ -2,7 +2,7 @@
 
 namespace hwcomlib
 {
-  UdpRecvClass::UdpRecvClass( uint16_t udp_port ):
+  UdpRecv::UdpRecv( uint16_t udp_port ):
   iosrv_ptr_( new boost::asio::io_service )
   {
     //Initializing Socket
@@ -11,13 +11,13 @@ namespace hwcomlib
   }
 
 
-  UdpRecvClass::~UdpRecvClass()
+  UdpRecv::~UdpRecv()
   {
     socket_ptr_->close();
   }
 
 
-  std::tuple<size_t, std::string> UdpRecvClass::recvData( std::string src_ip )
+  std::tuple<size_t, std::string> UdpRecv::recvData( std::string src_ip )
   {
     /* Local Variables Declaration */
     boost::asio::ip::udp::endpoint src_endpoint;

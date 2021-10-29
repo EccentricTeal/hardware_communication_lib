@@ -2,7 +2,7 @@
 
 namespace hwcomlib
 {
-  UdpSendClass::UdpSendClass( std::string dest_ip, uint16_t dest_port ):
+  UdpSend::UdpSend( std::string dest_ip, uint16_t dest_port ):
   iosrv_ptr_( new boost::asio::io_service )
   {
     //Initializing Socket
@@ -12,20 +12,20 @@ namespace hwcomlib
   }
 
 
-  UdpSendClass::~UdpSendClass()
+  UdpSend::~UdpSend()
   {
     socket_ptr_->close();
   }
 
 
-  void UdpSendClass::setDestEndpoint( std::string dest_ip, uint16_t dest_port )
+  void UdpSend::setDestEndpoint( std::string dest_ip, uint16_t dest_port )
   {
     boost::asio::ip::address_v4 ip_addr = boost::asio::ip::address_v4::from_string( dest_ip );
     dest_endpoint_ = boost::asio::ip::udp::endpoint( ip_addr, dest_port );
   }
 
 
-  int32_t UdpSendClass::sendData( std::string send_data )
+  int32_t UdpSend::sendData( std::string send_data )
   {
     const size_t sent = socket_ptr_->send_to( boost::asio::buffer( send_data ), dest_endpoint_ );
 
