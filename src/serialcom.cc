@@ -2,12 +2,13 @@
 //Referenced
 /* https://blog.myon.info/entry/2015/04/19/boost-asio-serial/ */
 /* http://blog.livedoor.jp/k_yon/archives/52145222.html */
+/* https://amedama1x1.hatenablog.com/entry/2015/12/14/000000_1 */
+/* https://yutopp.hateblo.jp/entry/2011/12/15/001518 */
 
 namespace hwcomlib
 {
   SerialCom::SerialCom( std::string port, unsigned int baudrate )
   {
-    iosrv_ = std::make_unique<boost::asio::io_service>();
     serialport_ = std::make_unique<boost::asio::serial_port>( iosrv_, port.c_str() );
 
     serialport_->set_option( boost::asio::serial_port_base::baud_rate( baudrate ) );
@@ -20,6 +21,7 @@ namespace hwcomlib
 
   SerialCom::~SerialCom()
   {
+    //iosrv_.stop(); <- Executed by destructor of io_service::work. If stop, the thread to execute iosrv_.run(), is also gointg to stop.
     if( serialport_->is_open() ){ serialport_->close(); }
   }
 
@@ -75,25 +77,36 @@ namespace hwcomlib
   }
 
 
-  void SerialCom::runAsync( void )
+  void SerialCom::run( void )
   {
-    thread_async_serialcom_ = std::make_unique<std::thread>( iosrv_->run() );
+    if( iosrv_work_ || thread_async_serialcom_->joinable() )
+    {
+      ;
+    }
+    else
+    {
+      iosrv_.reset();//For case of re-running
+      iosrv_work_ = std::make_unique<boost::asio::io_service::work>( iosrv_ );
+      thread_async_serialcom_ = std::make_unique<std::thread>( [this]{ iosrv_.run(); } );
+    }
+  }
+
+  void SerialCom::stop( void )
+  {
+    if( iosrv_work_ ){ iosrv_work_->~work(); }
+    if( thread_async_serialcom_->joinable() ){ thread_async_serialcom_->join(); }
   }
 
 
-  std::size_t SerialCom::sendSync( std::string& buffer )
+  void SerialCom::dispatchSend( std::string& buffer, std::function<void( const boost::system::error_code&, std::size_t )> handler )
   {
-    std::size_t send_size = serialport_->write_some( boost::asio::buffer( buffer ) );
-
-    return send_size;
+    serialport_->async_write_some( boost::asio::buffer( buffer ), std::bind( handler, std::placeholders::_1, std::placeholders::_2 ) );
   }
 
 
-  std::size_t SerialCom::recvSync( std::string& buffer )
+  void SerialCom::dispatchRecv( std::string& buffer, std::function<void( const boost::system::error_code&, std::size_t, std::string& )> handler )
   {
-    std::size_t recv_size = serialport_->read_some( boost::asio::buffer( buffer ) );
-
-    return recv_size;
+    serialport_->async_read_some( boost::asio::buffer( buffer ), std::bind( handler, std::placeholders::_1, std::placeholders::_2, std::ref( buffer ) ) );
   }
 
 
