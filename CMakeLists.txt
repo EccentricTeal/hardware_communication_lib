@@ -20,8 +20,8 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-find_package(rclcpp REQUIRED)
-find_package(std_msgs REQUIRED)
+#find_package(rclcpp REQUIRED)
+#find_package(std_msgs REQUIRED)
 
 #Build UDPCOM
 #if( HWCOMLIB_BUILD_SHARED_LIBS )
@@ -29,36 +29,60 @@ add_library(udpcom SHARED
   src/udp_recv.cc
   src/udp_send.cc
 )
+add_library(serialcom SHARED
+  src/serialcom.cc
+)
 #else()
 #  add_library(udpcom STATIC
 #    src/udp_recv.cc
 #    src/udp_send.cc
 #  )
+#  add_library(serialcom STATIC
+#    src/serialcom.cc
+#  )
 #endif()
+
 target_compile_definitions(udpcom
   PRIVATE "UDPCOM_BUILDING_LIBRARY"
 )
+target_compile_definitions(serialcom
+  PRIVATE "SERIALCOM_BUILDING_LIBRARY"
+)
+
 ament_target_dependencies(udpcom
   #None
 )
+ament_target_dependencies(serialcom
+  #None
+)
+
 target_include_directories(udpcom
   PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
 )
+target_include_directories(serialcom
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
+
+
 if(NOT WIN32)
   ament_environment_hooks(
     "${ament_cmake_package_templates_ENVIRONMENT_HOOK_LIBRARY_PATH}"
   )
 endif()
-
 ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
+
+
 install(
   DIRECTORY include/
   DESTINATION include
 )
 install(
-  TARGETS udpcom
+  TARGETS udpcom serialcom
+  #TARGETS serialcom
   EXPORT export_${PROJECT_NAME}
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
