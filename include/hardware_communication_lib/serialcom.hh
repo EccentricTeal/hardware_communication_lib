@@ -17,6 +17,7 @@
 #include <thread>
 #include <functional>
 #include <boost/asio.hpp>
+#include <vector>
 
 /**
  * Core class for Serial communication.
@@ -44,8 +45,8 @@ namespace hwcomlib
       //Control
       void run( void );
       void stop( void );
-      void dispatchSend( std::string& buffer, std::function<void( const boost::system::error_code&, std::size_t )> handler ); //Non-Blocking
-      void dispatchRecv( std::string& buffer, std::function<void( const boost::system::error_code&, std::size_t, std::string& )> handler ); //Non-Blocking
+      void dispatchSend( char* buffer, std::function<void( const boost::system::error_code&, std::size_t )> handler ); //Non-Blocking
+      void dispatchRecv( char* buffer, std::function<void( const boost::system::error_code&, std::size_t )> handler ); //Non-Blocking
 
     /* Class member objects */
     private:

@@ -79,7 +79,7 @@ namespace hwcomlib
 
   void SerialCom::run( void )
   {
-    if( iosrv_work_ || thread_async_serialcom_->joinable() )
+    if( iosrv_work_ )
     {
       ;
     }
@@ -98,15 +98,15 @@ namespace hwcomlib
   }
 
 
-  void SerialCom::dispatchSend( std::string& buffer, std::function<void( const boost::system::error_code&, std::size_t )> handler )
+  void SerialCom::dispatchSend( char* buffer, std::function<void( const boost::system::error_code&, std::size_t )> handler )
   {
-    serialport_->async_write_some( boost::asio::buffer( buffer ), std::bind( handler, std::placeholders::_1, std::placeholders::_2 ) );
+    serialport_->async_write_some( boost::asio::buffer( buffer, sizeof(buffer) ), std::bind( handler, std::placeholders::_1, std::placeholders::_2 ) );
   }
 
 
-  void SerialCom::dispatchRecv( std::string& buffer, std::function<void( const boost::system::error_code&, std::size_t, std::string& )> handler )
+  void SerialCom::dispatchRecv( char* buffer, std::function<void( const boost::system::error_code&, std::size_t )> handler )
   {
-    serialport_->async_read_some( boost::asio::buffer( buffer ), std::bind( handler, std::placeholders::_1, std::placeholders::_2, std::ref( buffer ) ) );
+    serialport_->async_read_some( boost::asio::buffer( buffer, sizeof(buffer) ), std::bind( handler, std::placeholders::_1, std::placeholders::_2 ) );
   }
 
 
