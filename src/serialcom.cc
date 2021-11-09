@@ -28,8 +28,14 @@ namespace hwcomlib
 
   bool SerialCom::setPort( std::string port )
   {
-    if( serialport_->is_open() ){ serialport_->close(); }
+    if( serialport_->is_open() )
+    { 
+      serialport_->close(); 
+      return false;  
+    }
     serialport_->open( port.c_str() );
+
+    return true;
   }
 
   bool SerialCom::setBaudRate( unsigned int rate )
@@ -98,15 +104,32 @@ namespace hwcomlib
   }
 
 
-  void SerialCom::dispatchSend( char* buffer, std::function<void( const boost::system::error_code&, std::size_t )> handler )
+  void SerialCom::dispatchSend( std::vector<unsigned char>& buffer, std::function<void( const boost::system::error_code&, std::size_t )> handler )
   {
-    serialport_->async_write_some( boost::asio::buffer( buffer, sizeof(buffer) ), std::bind( handler, std::placeholders::_1, std::placeholders::_2 ) );
+    serialport_->async_write_some(
+      boost::asio::buffer( buffer ),
+      handler
+    );
   }
 
 
-  void SerialCom::dispatchRecv( char* buffer, std::function<void( const boost::system::error_code&, std::size_t )> handler )
+  void SerialCom::dispatchRecv( std::vector<unsigned char>& buffer, std::function<void( const boost::system::error_code&, std::size_t )> handler )
   {
-    serialport_->async_read_some( boost::asio::buffer( buffer, sizeof(buffer) ), std::bind( handler, std::placeholders::_1, std::placeholders::_2 ) );
+    serialport_->async_read_some(
+      boost::asio::buffer( buffer ),
+      handler
+    );
+  }
+
+
+  void SerialCom::dispatchRecvUntil( boost::asio::streambuf& buffer, std::string delimiter, std::function<void( const boost::system::error_code&, std::size_t )> handler )
+  {
+    boost::asio::async_read_until(
+      *serialport_,
+      buffer,
+      delimiter.c_str(),
+      handler
+    );
   }
 
 
