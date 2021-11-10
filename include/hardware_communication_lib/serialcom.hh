@@ -17,6 +17,7 @@
 #include <thread>
 #include <functional>
 #include <boost/asio.hpp>
+#include <boost/regex.hpp>
 #include <streambuf>
 
 /**
@@ -26,7 +27,10 @@ namespace hwcomlib
 {
 
   class SerialCom
-  {       
+  {
+    /* typedef */
+    typedef boost::asio::buffers_iterator<boost::asio::streambuf::const_buffers_type> Iterator;
+
     /* Constructor, Destructor */
     public:
       SerialCom( std::string port, unsigned int baudrate );
@@ -48,6 +52,11 @@ namespace hwcomlib
       void dispatchSend( std::vector<unsigned char>& buffer, std::function<void( const boost::system::error_code&, std::size_t )> handler ); //Non-Blocking
       void dispatchRecv( std::vector<unsigned char>& buffer, std::function<void( const boost::system::error_code&, std::size_t )> handler ); //Non-Blocking
       void dispatchRecvUntil( boost::asio::streambuf& buffer, std::string delimiter, std::function<void( const boost::system::error_code&, std::size_t )> handler ); //Non-Blocking
+      void dispatchRecvUntil( boost::asio::streambuf& buffer, const boost::regex& regex_condition , std::function<void( const boost::system::error_code&, std::size_t )> handler ); //Non-Blocking
+
+    private:
+      std::pair<Iterator, bool> match_condition( Iterator begin, Iterator end );
+
 
     /* Class member objects */
     private:
