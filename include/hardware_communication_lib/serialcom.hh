@@ -51,6 +51,7 @@ namespace hwcomlib
       void stop( void );
       void dispatchSend( std::vector<unsigned char>& buffer, std::function<void( const boost::system::error_code&, std::size_t )> handler ); //Non-Blocking
       void dispatchRecv( boost::asio::streambuf& buffer, std::function<void( const boost::system::error_code&, std::size_t )> handler ); //Non-Blocking
+      void dispatchRecvSize( boost::asio::streambuf& buffer, unsigned int size, std::function<void( const boost::system::error_code&, std::size_t )> handler ); //Non-Blocking
       void dispatchRecvUntil( boost::asio::streambuf& buffer, std::string delimiter, std::function<void( const boost::system::error_code&, std::size_t )> handler ); //Non-Blocking
       void dispatchRecvUntil( boost::asio::streambuf& buffer, const boost::regex& regex_condition , std::function<void( const boost::system::error_code&, std::size_t )> handler ); //Non-Blocking
 

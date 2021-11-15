@@ -124,6 +124,17 @@ namespace hwcomlib
   }
 
 
+  void SerialCom::dispatchRecvSize( boost::asio::streambuf& buffer, unsigned int size, std::function<void( const boost::system::error_code&, std::size_t )> handler )
+  {
+    boost::asio::async_read(
+      *serialport_,
+      buffer,
+      boost::asio::transfer_exactly( size ),
+      handler
+    );
+  }
+
+
   void SerialCom::dispatchRecvUntil( boost::asio::streambuf& buffer, std::string delimiter, std::function<void( const boost::system::error_code&, std::size_t )> handler )
   {
     boost::asio::async_read_until(
