@@ -104,7 +104,10 @@ namespace hwcomlib
   }
 
 
-  void SerialCom::dispatchSend( std::vector<unsigned char>& buffer, std::function<void( const boost::system::error_code&, std::size_t )> handler )
+  void SerialCom::dispatchSend(
+    std::vector<unsigned char>& buffer,
+    std::function<void( const boost::system::error_code&, std::size_t )> handler
+  )
   {
     serialport_->async_write_some(
       boost::asio::buffer( buffer ),
@@ -113,7 +116,22 @@ namespace hwcomlib
   }
 
 
-  void SerialCom::dispatchRecv( boost::asio::streambuf& buffer, std::function<void( const boost::system::error_code&, std::size_t )> handler )
+  void SerialCom::dispatchSend(
+    std::shared_ptr<std::vector<unsigned char>> buffer,
+    std::function<void( const boost::system::error_code&, std::size_t )> handler
+  )
+  {
+    serialport_->async_write_some(
+      boost::asio::buffer( *buffer ),
+      handler
+    );
+  }
+
+
+  void SerialCom::dispatchRecv(
+    boost::asio::streambuf& buffer,
+    std::function<void( const boost::system::error_code&, std::size_t )> handler
+  )
   {
     boost::asio::async_read(
       *serialport_,
@@ -124,7 +142,11 @@ namespace hwcomlib
   }
 
 
-  void SerialCom::dispatchRecvSize( boost::asio::streambuf& buffer, unsigned int size, std::function<void( const boost::system::error_code&, std::size_t )> handler )
+  void SerialCom::dispatchRecvSize(
+    boost::asio::streambuf& buffer,
+    unsigned int size,
+    std::function<void( const boost::system::error_code&, std::size_t )> handler
+  )
   {
     boost::asio::async_read(
       *serialport_,
@@ -135,7 +157,11 @@ namespace hwcomlib
   }
 
 
-  void SerialCom::dispatchRecvUntil( boost::asio::streambuf& buffer, std::string delimiter, std::function<void( const boost::system::error_code&, std::size_t )> handler )
+  void SerialCom::dispatchRecvUntil(
+    boost::asio::streambuf& buffer,
+    std::string delimiter,
+    std::function<void( const boost::system::error_code&, std::size_t )> handler
+  )
   {
     boost::asio::async_read_until(
       *serialport_,

@@ -49,11 +49,35 @@ namespace hwcomlib
       //Control
       void run( void );
       void stop( void );
-      void dispatchSend( std::vector<unsigned char>& buffer, std::function<void( const boost::system::error_code&, std::size_t )> handler ); //Non-Blocking
-      void dispatchRecv( boost::asio::streambuf& buffer, std::function<void( const boost::system::error_code&, std::size_t )> handler ); //Non-Blocking
-      void dispatchRecvSize( boost::asio::streambuf& buffer, unsigned int size, std::function<void( const boost::system::error_code&, std::size_t )> handler ); //Non-Blocking
-      void dispatchRecvUntil( boost::asio::streambuf& buffer, std::string delimiter, std::function<void( const boost::system::error_code&, std::size_t )> handler ); //Non-Blocking
-      void dispatchRecvUntil( boost::asio::streambuf& buffer, const boost::regex& regex_condition , std::function<void( const boost::system::error_code&, std::size_t )> handler ); //Non-Blocking
+
+      //Dispatch send/write task
+      void dispatchSend( 
+        std::vector<unsigned char>& buffer,
+        std::function<void( const boost::system::error_code&, std::size_t )> handler
+      );
+      void dispatchSend( 
+        std::shared_ptr<std::vector<unsigned char>> buffer,
+        std::function<void( const boost::system::error_code&, std::size_t )> handler
+      );
+      void dispatchRecv(
+        boost::asio::streambuf& buffer,
+        std::function<void( const boost::system::error_code&, std::size_t )> handler
+      );
+      void dispatchRecvSize(
+        boost::asio::streambuf& buffer,
+        unsigned int size,
+        std::function<void( const boost::system::error_code&, std::size_t )> handler
+      );
+      void dispatchRecvUntil(
+        boost::asio::streambuf& buffer,
+        std::string delimiter,
+        std::function<void( const boost::system::error_code&, std::size_t )> handler
+      );
+      void dispatchRecvUntil(
+        boost::asio::streambuf& buffer,
+        const boost::regex& regex_condition,
+        std::function<void( const boost::system::error_code&, std::size_t )> handler
+      );
 
     private:
       std::pair<Iterator, bool> match_condition( Iterator begin, Iterator end );
