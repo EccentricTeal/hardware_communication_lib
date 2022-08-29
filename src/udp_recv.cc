@@ -17,12 +17,11 @@ namespace hwcomlib
   }
 
 
-  std::tuple<size_t, std::string> UdpRecv::recvData( std::string src_ip )
+  std::tuple<size_t, std::string> UdpRecv::recvData( std::string src_ip, std::vector<char>& buffer )
   {
     /* Local Variables Declaration */
     boost::asio::ip::udp::endpoint src_endpoint;
     std::string recv_ipaddr;
-    std::vector<char> buffer;
 
     /* Initializing Local Variables */
     buffer.clear();
@@ -33,12 +32,12 @@ namespace hwcomlib
 
     if( recv_ipaddr != src_ip )
     {
-        return std::make_tuple( 0, recv_ipaddr );
+      buffer.clear();
+      return std::make_tuple( 0, recv_ipaddr );
     }
     else
     {
-      recvdata_.clear();
-      std::copy( buffer.begin(), buffer.end(), recvdata_.begin() );
+      ;
     }
 
     return std::make_tuple( sent, recv_ipaddr );

@@ -172,7 +172,11 @@ namespace hwcomlib
   }
 
 
-  void SerialCom::dispatchRecvUntil( boost::asio::streambuf& buffer, const boost::regex& regex_condition , std::function<void( const boost::system::error_code&, std::size_t )> handler )
+  void SerialCom::dispatchRecvUntil(
+    boost::asio::streambuf& buffer,
+    const boost::regex& regex_condition,
+    std::function<void( const boost::system::error_code&, std::size_t )> handler
+  )
   {
     boost::asio::async_read_until(
       *serialport_,

@@ -57,7 +57,7 @@ namespace hwcomlib
 
     /* Public member functions */
     public:
-      std::tuple<size_t, std::string> recvData( std::string src_ip );
+      std::tuple<size_t, std::string> recvData( std::string src_ip, std::vector<char>& buffer );
 
     /* Class member functions */
     private:
