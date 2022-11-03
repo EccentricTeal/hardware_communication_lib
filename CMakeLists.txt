@@ -1,30 +1,24 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 2.8.3)
 project(hardware_communication_lib)
 
-#option(HWCOMLIB_BUILD_SHARED_LIBS "build as a shared library" ON)
+find_package(catkin REQUIRED COMPONENTS
+)
 
-# Default to C99
-if(NOT CMAKE_C_STANDARD)
-  set(CMAKE_C_STANDARD 99)
-endif()
+catkin_package(
+  INCLUDE_DIRS include
+#  LIBRARIES shipcon
+#  CATKIN_DEPENDS roscpp rospy rqt_gui rqt_gui_py std_msgs message_runtime
+#  DEPENDS system_lib
+)
 
-# Default to C++14
-if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14)
-endif()
+###########
+## Build ##
+###########
+include_directories(
+  include
+  ${catkin_INCLUDE_DIRS}
+)
 
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  add_compile_options(-Wall -Wextra -Wpedantic)
-endif()
-
-
-# find dependencies
-find_package(ament_cmake REQUIRED)
-#find_package(rclcpp REQUIRED)
-#find_package(std_msgs REQUIRED)
-
-#Build UDPCOM
-#if( HWCOMLIB_BUILD_SHARED_LIBS )
 add_library(udpcom SHARED
   src/udp_recv.cc
   src/udp_send.cc
@@ -32,54 +26,11 @@ add_library(udpcom SHARED
 add_library(serialcom SHARED
   src/serialcom.cc
 )
-#else()
-#  add_library(udpcom STATIC
-#    src/udp_recv.cc
-#    src/udp_send.cc
-#  )
-#  add_library(serialcom STATIC
-#    src/serialcom.cc
-#  )
-#endif()
-
-target_compile_definitions(udpcom
-  PRIVATE "UDPCOM_BUILDING_LIBRARY"
-)
-target_compile_definitions(serialcom
-  PRIVATE "SERIALCOM_BUILDING_LIBRARY"
-)
-
-ament_target_dependencies(udpcom
-  #None
-)
-ament_target_dependencies(serialcom
-  #None
-)
-
-target_include_directories(udpcom
-  PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-)
-target_include_directories(serialcom
-  PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-)
 
 
-if(NOT WIN32)
-  ament_environment_hooks(
-    "${ament_cmake_package_templates_ENVIRONMENT_HOOK_LIBRARY_PATH}"
-  )
-endif()
-ament_export_targets(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
-
-
-install(
-  DIRECTORY include/
-  DESTINATION include
-)
+#############
+## Install ##
+#############
 install(
   TARGETS udpcom serialcom
   #TARGETS serialcom
@@ -89,6 +40,7 @@ install(
   RUNTIME DESTINATION bin
   INCLUDES DESTINATION include
 )
-
-
-ament_package()
+install(
+  DIRECTORY include/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
